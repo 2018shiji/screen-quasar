@@ -71,12 +71,6 @@
               <q-td key="SELECTED" :props="props">
                 <q-checkbox v-model="props.row.selected" dense autofocus />
               </q-td>
-              <q-td key="NAME" :props="props">
-                {{ props.row.name }}
-                <q-popup-edit v-model="props.row.name" buttons>
-                  <q-input v-model.number="props.row.name" dense autofocus />
-                </q-popup-edit>
-              </q-td>
               <q-td key="Service" :props="props">
                 {{ props.row.service }}
                 <q-popup-edit v-model="props.row.service" buttons>
@@ -120,7 +114,7 @@ export default {
       serverTableInsertRemoveRowId: 0,
       initialPage1: {
         descending: false,
-        rowsPerPage: 5
+        rowsPerPage: 7
       },
       initialPage2: {
         descending: false,
@@ -130,16 +124,17 @@ export default {
       nodeTableColumns: [
         { name: 'SELECTED', label: 'SELECTED', field: 'selected' },
         { name: 'ID', label: 'ID', field: 'id', sortable: true },
-        { name: 'NAME', label: '名称', field: 'name' },
         { name: 'TYPE', label: '第三方屏控厂商', field: 'type' },
         { name: 'WALLMODE', label: '上墙预案', field: 'wallMode' },
         { name: 'IMAGE', label: '屏控应用图标', field: 'image' },
         { name: 'REMARK', label: '备注', field: 'remark' }
       ],
       nodeTableContent: [
-        { selected: false, id: '1', name: 'name1', type: 'type1', wallMode: 'wallMode1', image: 'image1', remark: 'remark' },
-        { selected: false, id: '2', name: 'name2', type: 'type2', wallMode: 'wallMode1', image: 'image1', remark: 'remark' },
-        { selected: false, id: '3', name: 'name3', type: 'type3', wallMode: 'wallMode1', image: 'image1', remark: 'remark' }
+        { selected: false, id: 'HX1F_S1', type: 'HIK', wallMode: 'AR全景', image: '../../Image/AR.png', remark: 'AR' },
+        { selected: false, id: 'HX1F_S2', type: 'HIK', wallMode: '4K-PC', image: '../../Image/无人集卡.png', remark: '无人集卡' },
+        { selected: false, id: 'HX1F_S3', type: 'HIK', wallMode: '4K-PC', image: '../../Image/无人机.png', remark: '无人机' },
+        { selected: false, id: 'HX1F_S4', type: 'HIK', wallMode: '4K-PC', image: '../../Image/巡逻机器人.png', remark: '巡逻机器人' },
+        { selected: false, id: 'HX1F_S5', type: 'HIK', wallMode: '4K-PC', image: '../../Image/北斗.png', remark: '北斗_AIS/GIS' }
       ],
       serverTableColumns: [
         { name: 'SELECTED', label: 'SELECTED', field: 'selected' },
@@ -158,7 +153,7 @@ export default {
     console.log('init content mounted begin')
     eventCenter.$on('init-content', inputInit => {
       console.log('listen event of init server content:' + this.initContent)
-      if (inputInit.updateUrl === '/api/setServerConfig') {
+      if (inputInit.updateUrl === '/serverCtrl/setServerConfig') {
         this.uploadUrl = inputInit.updateUrl
         this.nodeTableContent = inputInit.initContent.appNodes.nodes
         this.serverTableContent = inputInit.initContent.servers.servers

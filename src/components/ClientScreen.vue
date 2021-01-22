@@ -7,8 +7,6 @@
           :columns="nodeTableColumns"
           :data="nodeTableContent"
           :pagination="initialPagination"
-          row-key="name"
-          style="height: 500px"
         >
           <template v-slot:top>
             <q-btn color="primary" label="Add row" @click="addRow" />
@@ -26,12 +24,6 @@
                   <q-input v-model.number="props.row.id" dense autofocus />
                 </q-popup-edit>
               </q-td>
-              <q-td key="NAME" :props="props">
-                {{ props.row.name }}
-                <q-popup-edit v-model="props.row.name" buttons>
-                  <q-input v-model.number="props.row.name" dense autofocus />
-                </q-popup-edit>
-              </q-td>
               <q-td key="TITLES" :props="props">
                 {{ props.row.titles }}
                 <q-popup-edit v-model="props.row.titles" buttons>
@@ -42,6 +34,12 @@
                 {{ props.row.exeFile }}
                 <q-popup-edit v-model="props.row.exeFile" buttons>
                   <q-input v-model.number="props.row.exeFile" dense autofocus />
+                </q-popup-edit>
+              </q-td>
+              <q-td key="PARAMS" :props="props">
+                {{ props.row.params }}
+                <q-popup-edit v-model="props.row.params" buttons>
+                  <q-input v-model.number="props.row.params" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="REMARK" :props="props">
@@ -59,11 +57,6 @@
           <q-btn class="col-6" label="Submit" type="submit" color="primary"/>
           <q-btn class="col-6" label="Reset" type="reset" color="primary" flat />
         </form>
-        <q-btn class="col-6" label="启动" color="primary" @click="bootstrapVideo" />
-        <q-btn class="col-6" label="播放" color="primary" @click="playVideo" />
-        <q-btn class="col-6" label="暂停" color="primary" @click="pauseVideo" />
-        <q-btn class="col-6" label="重来" color="primary" @click="rewindVideo" />
-
       </div>
     </div>
   </q-page>
@@ -85,15 +78,20 @@ export default {
       nodeTableColumns: [
         { name: 'SELECTED', label: 'SELECTED', field: 'selected' },
         { name: 'ID', label: 'ID', field: 'id', sortable: true },
-        { name: 'NAME', label: '名称', field: 'name' },
         { name: 'TITLES', label: '标题', field: 'titles' },
         { name: 'EXEFILE', label: '执行程序', field: 'exeFile' },
+        { name: 'PARAMS', label: '附加参数', field: 'params' },
         { name: 'REMARK', label: '备注', field: 'remark' }
       ],
       nodeTableContent: [
-        { selected: false, id: '1', name: 'name1', titles: 'title1', exeFile: 'exeFile1', type: 'type1', remark: 'remark' },
-        { selected: false, id: '2', name: 'name2', titles: 'title2', exeFile: 'exeFile2', type: 'type2', remark: 'remark' },
-        { selected: false, id: '3', name: 'name3', titles: 'title3', exeFile: 'exeFile3', type: 'type3', remark: 'remark' }
+        { selected: false, id: 'HX1F_S1', titles: '10.28.120.5', exeFile: 'default', params: 'default', remark: 'AR' },
+        { selected: false, id: 'HX1F_S2', titles: '无人驾驶', exeFile: 'default', params: 'default', remark: '无人集卡录像' },
+        { selected: false, id: 'HX1F_S3', titles: '无人机', exeFile: 'default', params: 'default', remark: '无人机录像' },
+        { selected: false, id: 'HX1F_S4', titles: '机器人', exeFile: 'default', params: 'default', remark: '机器人' },
+        { selected: false, id: 'HX1F_S5', titles: '在港船舶实时监控', exeFile: 'default', params: 'default', remark: '北斗_AIS/GIS' },
+        { selected: false, id: 'HX1F_S6', titles: '安全监控', exeFile: 'default', params: 'default', remark: '安全监控' },
+        { selected: false, id: 'HX1F_S7', titles: '妈湾智慧港 综合管理平台', exeFile: 'default', params: 'default', remark: 'ePort' },
+        { selected: false, id: 'HX1F_S8', titles: '招商水印', exeFile: 'default', params: 'default', remark: 'HX视频' }
       ],
       tableContent: { nodes: [] }
     }
@@ -101,7 +99,7 @@ export default {
   mounted () {
     console.log('init content mounted begin')
     eventCenter.$on('init-content', inputInit => {
-      if (inputInit.updateUrl === '/api/setClientConfig') {
+      if (inputInit.updateUrl === '/clientCtrl/setClientConfig') {
         this.updateUrl = inputInit.updateUrl
         this.nodeTableContent = inputInit.initContent.nodes
       }
@@ -112,22 +110,10 @@ export default {
     onSubmit () {
       console.log('trigger submit event')
       this.tableContent.nodes = this.nodeTableContent
-      this.uploadTableContent(this.updateUrl, this.tableContent)
+      axios.post(this.updateUrl, this.tableContent)
     },
     onReset () {
       console.log('trigger reset event')
-    },
-    bootstrapVideo () {
-      axios.get('/api/bootstrapVideo')
-    },
-    playVideo () {
-      axios.get('/api/playVideo')
-    },
-    pauseVideo () {
-      axios.get('/api/pauseVideo')
-    },
-    rewindVideo () {
-      axios.get('/api/rewindVideo')
     },
     uploadTableContent (url, param) {
       axios.post(url, param)

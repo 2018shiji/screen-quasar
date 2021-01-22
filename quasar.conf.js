@@ -75,16 +75,20 @@ module.exports = function (/* ctx */) {
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
       https: false,
-      port: 8080,
+      port: 20010,
       open: true, // opens browser window automatically
       proxy: {
-        '/api': {
-          target: 'http://localhost:8083',
-          pathRewrite: { '^/api': '' }
+        '/clientCtrl': {
+          target: 'http://localhost:20011',
+          pathRewrite: { '^/clientCtrl': '' }
         },
-        '/script': {
-          target: 'ws://localhost:8084',
-          pathRewrite: { '^/script': '' }
+        '/serverCtrl': {
+          target: 'http://localhost:20011',
+          pathRewrite: { '^/serverCtrl': '' }
+        },
+        '/clientScript': {
+          target: 'ws://localhost:20012',
+          pathRewrite: { '^/clientScript': '' }
         }
       }
     },

@@ -8,7 +8,6 @@
           :data="nodeTableContent"
           :pagination="initialPagination"
           row-key="name"
-          style="height: 500px"
         >
           <template v-slot:top>
             <q-btn color="primary" label="Add row" @click="addRow" />
@@ -86,9 +85,9 @@ export default {
         { name: 'REMARK', label: '备注', field: 'remark' }
       ],
       nodeTableContent: [
-        { selected: false, id: '1', name: 'name1', titles: 'title1', exeFile: 'exeFile1', type: 'type1', remark: 'remark' },
-        { selected: false, id: '2', name: 'name2', titles: 'title2', exeFile: 'exeFile2', type: 'type2', remark: 'remark' },
-        { selected: false, id: '3', name: 'name3', titles: 'title3', exeFile: 'exeFile3', type: 'type3', remark: 'remark' }
+        { selected: false, id: 'HX1F_S6', name: 'default', titles: '安全监控', exeFile: 'default', remark: '安全监控' },
+        { selected: false, id: 'HX1F_S7', name: 'default', titles: '妈湾智慧港 综合管理平台', exeFile: 'default', remark: 'ePort' },
+        { selected: false, id: 'HX1F_S8', name: 'default', titles: '招商水印', exeFile: 'default', remark: 'HX视频' }
       ],
       tableContent: { nodes: [] }
     }

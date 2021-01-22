@@ -43,8 +43,8 @@
                 vertical
                 class="text-teal"
               >
-                <q-tab name="innerMails" icon="mail" label="App Record" @click="triggerAppEvent"/>
-                <q-tab name="innerAlarms" icon="alarm" label="Ctrl Record" @click="triggerCtrlEvent" />
+                <q-tab name="innerMails" icon="mail" label="App Record" />
+                <q-tab name="innerAlarms" icon="alarm" label="Ctrl Record" />
               </q-tabs>
             </template>
 
@@ -56,11 +56,11 @@
                 transition-next="slide-up"
               >
                 <q-tab-panel name="innerMails">
-                  <div id="AppCommandContent">{{appCmdContent}}</div>
+                  <div style="white-space: pre-line;">{{appCmdContent}}</div>
                 </q-tab-panel>
 
                 <q-tab-panel name="innerAlarms">
-                  <div id="CtrlCommandContent">{{ctrlCmdContent}}</div>
+                  <div  style="white-space: pre-line;">{{ctrlCmdContent}}</div>
                 </q-tab-panel>
 
               </q-tab-panels>
@@ -83,11 +83,11 @@ export default {
       appText: '脚本启动程序调用：',
       ctrlText: '屏控软件程序调用：',
       appOrCtrl: true,
-      appCmdContent: '应用程序启动脚本中控制台的输出内容',
-      ctrlCmdContent: '屏控软件启动脚本中控制台的输出内容',
+      appCmdContent: '应用程序启动脚本中控制台的输出内容\n',
+      ctrlCmdContent: '屏控软件启动脚本中控制台的输出内容\n',
       buttonColor: 'primary',
-      appUrl: '/script/startUpAppScript',
-      ctrlUrl: '/script/startUpCtrlScript',
+      appUrl: '/clientScript/startUpAppScript',
+      ctrlUrl: '/clientScript/startUpCtrlScript',
       appLoading: false,
       ctrlLoading: false,
       tab: 'mails',
@@ -126,16 +126,8 @@ export default {
           this.ctrlLoading = false
         })
     },
-    triggerAppEvent () {
-      console.log(this.appCmdContent)
-      document.getElementById('AppCommandContent').innerHTML = this.appCmdContent
-    },
-    triggerCtrlEvent () {
-      console.log(this.ctrlCmdContent)
-      document.getElementById('CtrlCommandContent').innerHTML = this.ctrlCmdContent
-    },
     initWebSocket () {
-      this.websocketProxy = new WebSocket('ws://localhost:8084/websocket/asset')
+      this.websocketProxy = new WebSocket('ws://10.28.111.36:9092/websocket/asset')
       this.websocketProxy.onopen = this.websocketOnOpen
       this.websocketProxy.onmessage = this.websocketOnMessage
       this.websocketProxy.onclose = this.websocketOnClose
@@ -150,10 +142,8 @@ export default {
     websocketOnMessage (msg) {
       if (this.appOrCtrl === true) {
         this.appCmdContent = this.appCmdContent + msg.data
-        document.getElementById('AppCommandContent').innerHTML = this.appCmdContent
       } else if (this.appOrCtrl === false) {
         this.ctrlCmdContent = this.ctrlCmdContent + msg.data
-        document.getElementById('CtrlCommandContent').innerHTML = this.ctrlCmdContent
       }
       console.log('Socket 收到消息' + msg.data)
     },

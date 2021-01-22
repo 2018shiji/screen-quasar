@@ -7,9 +7,6 @@ const routes = [
       { path: 'index', component: () => import('pages/Index.vue') },
       { path: 'clientConfig', component: () => import('components/ClientScreen.vue') },
       { path: 'serverConfig', component: () => import('components/ServerScreen.vue') },
-      { path: 'test', component: () => import('components/Test.vue') },
-      { path: 'testAddRow', component: () => import('components/TestAddRow.vue') },
-      { path: 'testMultiCheckBox', component: () => import('components/TestMultiCheckBox.vue') },
 
       { path: 'clientPlan1', component: () => import('components/plan/Plan1.vue') },
       { path: 'clientPlan2', component: () => import('components/plan/Plan2.vue') },
@@ -19,7 +16,14 @@ const routes = [
       { path: 'clientPlan6', component: () => import('components/plan/Plan6.vue') },
       { path: 'clientPlan7', component: () => import('components/plan/Plan7.vue') },
 
-      { path: 'clientScript', component: () => import('components/ClientScript.vue') }
+      { path: 'clientScript', component: () => import('components/ClientScript.vue') },
+
+      { path: 'video', component: () => import('components/Video.vue') },
+
+      { path: 'serverService', component: () => import('components/ServerService.vue') },
+      { path: 'clientService', component: () => import('components/ClientService.vue') },
+
+      { path: 'screenControl', component: () => import('components/ScreenControl.vue') }
     ]
   },
 

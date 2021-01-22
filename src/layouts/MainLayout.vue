@@ -68,11 +68,8 @@ export default {
         {
           label: '基本配置',
           children: [
-            { handler: (node) => this.handleClick(node), label: '客户端基本配置', url: 'clientConfig', initUrl: '/api/getClientConfig', updateUrl: '/api/setClientConfig' },
-            { handler: (node) => this.handleClick(node), label: '服务端基本配置', url: 'serverConfig', initUrl: '/api/getServerConfig', updateUrl: '/api/setServerConfig' },
-            { handler: (node) => this.handleClick(node), label: '测试路径', url: 'test', initUrl: '/api/getTestConfig', updateUrl: '/api/setTestConfig' },
-            { handler: (node) => this.handleClick(node), label: '测试添加行路径', url: 'testAddRow', initUrl: '/api/getTestAddRowConfig', updateUrl: '/api/setTestAddRowConfig' },
-            { handler: (node) => this.handleClick(node), label: '测试多选框路径', url: 'testMultiCheckBox', initUrl: '/api/getTestMultiCheckBoxConfig', updateUrl: '/api/setTestMultiCheckBoxConfig' }
+            { handler: (node) => this.handleClick(node), label: '客户端基本配置', url: 'clientConfig', initUrl: '/clientCtrl/getClientConfig', updateUrl: '/clientCtrl/setClientConfig' },
+            { handler: (node) => this.handleClick(node), label: '服务端基本配置', url: 'serverConfig', initUrl: '/serverCtrl/getServerConfig', updateUrl: '/serverCtrl/setServerConfig' }
           ]
         },
         {
@@ -88,10 +85,29 @@ export default {
           ]
         },
         {
-          label: '脚本启动',
+          label: '服务启动',
           children: [
-            { handler: (node) => this.handleClick(node), label: '客户端启动脚本', url: 'clientScript', initUrl: '/script/getClientScript', updateUrl: '/script/setClientScript' },
-            { handler: (node) => this.handleClick(node), label: '服务端启动脚本', url: 'serverScript', initUrl: '', updateUrl: '' }
+            { handler: (node) => this.handleClick(node), label: '客户端服务启动', url: 'clientScript', initUrl: '', updateUrl: '' },
+            { handler: (node) => this.handleClick(node), label: '服务端服务启动', url: 'serverScript', initUrl: '', updateUrl: '' }
+          ]
+        },
+        {
+          label: '大屏控制',
+          children: [
+            { handler: (node) => this.handleClick(node), label: '屏控界面', url: 'screenControl', initUrl: '', updateUrl: '' }
+          ]
+        },
+        {
+          label: '视频播放',
+          children: [
+            { handler: (node) => this.handleClick(node), label: '视频控制', url: 'video', initUrl: '', updateUrl: '' }
+          ]
+        },
+        {
+          label: '服务在线情况',
+          children: [
+            { handler: (node) => this.handleClick(node), label: '服务端服务在线情况', url: 'serverService', initUrl: '', updateUrl: '' },
+            { handler: (node) => this.handleClick(node), label: '客户端服务在线情况', url: 'clientService', initUrl: '', updateUrl: '' }
           ]
         }
       ]
@@ -100,7 +116,9 @@ export default {
   methods: {
     handleClick (node) {
       console.log(`node: ${JSON.stringify(node)}`)
-      this.initInput(node.initUrl, node.updateUrl)
+      if (node.initUrl !== '' && node.updateUrl !== '') {
+        this.initInput(node.initUrl, node.updateUrl)
+      }
       this.$router.push(node.url)
     },
     async initInput (initUrl, updateUrl) {
