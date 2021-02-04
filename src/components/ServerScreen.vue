@@ -10,6 +10,7 @@
           <template v-slot:top>
             <q-btn color="primary" :disable="loading" label="Add row" @click="addNodeRow" />
             <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeNodeRow" />
+            <q-btn class="q-ml-sm" color="primary" label="Synchronized" @click="synchronize"/>
             <q-space />
           </template>
           <template v-slot:body="props">
@@ -20,37 +21,37 @@
               <q-td key="ID" :props="props">
                 {{ props.row.id }}
                 <q-popup-edit v-model="props.row.id" buttons>
-                  <q-input v-model.number="props.row.id" dense autofocus />
+                  <q-input v-model="props.row.id" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="NAME" :props="props">
                 {{ props.row.name }}
                 <q-popup-edit v-model="props.row.name" buttons>
-                  <q-input v-model.number="props.row.name" dense autofocus />
+                  <q-input v-model="props.row.name" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="TYPE" :props="props">
                 {{ props.row.type }}
                 <q-popup-edit v-model="props.row.type" buttons>
-                  <q-input v-model.number="props.row.type" dense autofocus />
+                  <q-input v-model="props.row.type" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="WALLMODE" :props="props">
                 {{ props.row.wallMode }}
                 <q-popup-edit v-model="props.row.wallMode" buttons>
-                  <q-input v-model.number="props.row.wallMode" dense autofocus />
+                  <q-input v-model="props.row.wallMode" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="IMAGE" :props="props">
                 {{ props.row.image }}
                 <q-popup-edit v-model="props.row.image" buttons>
-                  <q-input v-model.number="props.row.image" dense autofocus />
+                  <q-input v-model="props.row.image" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="REMARK" :props="props">
                 {{ props.row.remark }}
                 <q-popup-edit v-model="props.row.remark" buttons>
-                  <q-input v-model.number="props.row.remark" dense autofocus />
+                  <q-input v-model="props.row.remark" dense autofocus />
                 </q-popup-edit>
               </q-td>
             </q-tr>
@@ -74,7 +75,7 @@
               <q-td key="Service" :props="props">
                 {{ props.row.service }}
                 <q-popup-edit v-model="props.row.service" buttons>
-                  <q-input v-model.number="props.row.service" dense autofocus />
+                  <q-input v-model="props.row.service" dense autofocus />
                 </q-popup-edit>
               </q-td>
             </q-tr>
@@ -129,31 +130,23 @@ export default {
         { name: 'IMAGE', label: '屏控应用图标', field: 'image' },
         { name: 'REMARK', label: '备注', field: 'remark' }
       ],
-      nodeTableContent: [
-        { selected: false, id: 'HX1F_S1', type: 'HIK', wallMode: 'AR全景', image: '../../Image/AR.png', remark: 'AR' },
-        { selected: false, id: 'HX1F_S2', type: 'HIK', wallMode: '4K-PC', image: '../../Image/无人集卡.png', remark: '无人集卡' },
-        { selected: false, id: 'HX1F_S3', type: 'HIK', wallMode: '4K-PC', image: '../../Image/无人机.png', remark: '无人机' },
-        { selected: false, id: 'HX1F_S4', type: 'HIK', wallMode: '4K-PC', image: '../../Image/巡逻机器人.png', remark: '巡逻机器人' },
-        { selected: false, id: 'HX1F_S5', type: 'HIK', wallMode: '4K-PC', image: '../../Image/北斗.png', remark: '北斗_AIS/GIS' }
-      ],
+      nodeTableContent: [],
       serverTableColumns: [
         { name: 'SELECTED', label: 'SELECTED', field: 'selected' },
         { name: 'NAME', label: '客户端演示电脑', field: 'name', sortable: true },
         { name: 'Service', label: '客户端屏控服务', field: 'service', sortable: true }
       ],
-      serverTableContent: [
-        { selected: false, name: '演示电脑1', service: 'http://10.28.111.36:8733/ScreenService' },
-        { selected: false, name: '演示电脑2', service: 'http://10.28.111.37:8733/ScreenService' }
-      ],
+      serverTableContent: [],
       serverIP: '',
-      hikServer: ''
+      hikServer: '',
+      toClientTableContent: []
     }
   },
   mounted () {
     console.log('init content mounted begin')
     eventCenter.$on('init-content', inputInit => {
-      console.log('listen event of init server content:' + this.initContent)
-      if (inputInit.updateUrl === '/serverCtrl/setServerConfig') {
+      console.log('listen event of init server content:')
+      if (inputInit.updateUrl === '/serverCtrl/setServerConfig' && this.nodeTableContent.length === 0) {
         this.uploadUrl = inputInit.updateUrl
         this.nodeTableContent = inputInit.initContent.appNodes.nodes
         this.serverTableContent = inputInit.initContent.servers.servers
@@ -174,19 +167,30 @@ export default {
     onReset () {
       console.log('trigger reset event')
     },
-    uploadTableContent (url, param) {
+    uploadTableContent (url) {
       // const text = '{"appNodes": {"node": []}, "servers": {"servers": [{"name": "演示电脑2", "service": "http://10.28.111.37:8733/ScreenService"}]}, "serverIP": {"ip": "1"}, "hikServer": {"ip": "123", "port": "2"}}'
       // const input = JSON.parse(text)
       // const ttt = { appNodes: { nodes: [] }, servers: { servers: [] }, serverIP: { ip: '' }, hikServer: { ip: '', port: '' } }
       axios.post(url, this.tableContent)
     },
+    synchronize () {
+      this.toClientTableContent = []
+      for (let i = 0; i < this.nodeTableContent.length; i++) {
+        if (this.nodeTableContent[i].selected) {
+          const row = { selected: false, id: this.nodeTableContent[i].id, name: 'nameCase', titles: 'titleCase', exeFile: 'exeFileCase', remark: this.nodeTableContent[i].remark, appType: '默认', windowTitle: '默认', url: '默认' }
+          this.nodeTableContent[i].selected = false
+          this.toClientTableContent.push(row)
+        }
+      }
+      eventCenter.$emit('server-client-newlyAdded', this.toClientTableContent)
+    },
     addNodeRow () {
       console.log('----------add Node Row----------')
       this.getNodeTableRowIdForInsertRemove()
+      this.nodeTableContent[this.nodeTableInsertRemoveRowId - 1].selected = false
       console.log('-------insert node table row index---------' + this.nodeTableInsertRemoveRowId)
-      const nodeTableRowExample = { selected: false, id: 'idCase', name: 'nameCase', titles: 'titleCase', exeFile: 'exeFileCase', type: 'typeCase', wallMode: 'wallModeCase', image: 'imageCase', remark: 'remarkCase' }
+      const nodeTableRowExample = { selected: true, id: 'idCase', type: 'typeCase', wallMode: 'wallModeCase', image: 'imageCase', remark: 'remarkCase' }
       this.nodeTableContent = [...this.nodeTableContent.slice(0, this.nodeTableInsertRemoveRowId), nodeTableRowExample, ...this.nodeTableContent.slice(this.nodeTableInsertRemoveRowId)]
-      console.log(this.nodeTableContent)
     },
     removeNodeRow () {
       const message = confirm('确定删除行吗？')

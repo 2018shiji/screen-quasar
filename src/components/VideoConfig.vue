@@ -1,16 +1,8 @@
 <template>
     <div class="rightArea">
-      <div class="row">
-        <q-btn class="col-2" label="启动" color="primary" @click="bootstrapVideo" />
-        <q-btn class="col-2" label="播放" color="primary" @click="playVideo" />
-        <q-btn class="col-2" label="暂停" color="primary" @click="pauseVideo" />
-        <q-btn class="col-2" label="重来" color="primary" @click="rewindVideo" />
-        <q-btn class="col-2" label="调试" color="primary" @click="visibleCtrlPanel" />
-        <q-btn class="col-2" label="展示" color="primary" @click="invisibleCtrlPanel" />
-      </div>
       <div class="rightTable">
         <q-table
-          title="Video"
+          title="VideoConfig"
           :columns="playItemColumns"
           :data="playItemContent"
           :pagination="initialPagination"
@@ -31,10 +23,16 @@
                   <q-input v-model.number="props.row.mrl" dense autofocus />
                 </q-popup-edit>
               </q-td>
-              <q-td key="DESCRIPTION" :props="props">
-                {{ props.row.description }}
-                <q-popup-edit v-model="props.row.description" buttons>
-                  <q-input v-model.number="props.row.description" dense autofocus />
+              <q-td key="TITLE" :props="props">
+                {{ props.row.title }}
+                <q-popup-edit v-model="props.row.title" buttons>
+                  <q-input v-model.number="props.row.title" dense autofocus />
+                </q-popup-edit>
+              </q-td>
+              <q-td key="VOLUME" :props="props">
+                {{ props.row.volume }}
+                <q-popup-edit v-model="props.row.volume" buttons>
+                  <q-input v-model.number="props.row.volume" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="OPTIONS" :props="props">
@@ -59,11 +57,12 @@
 
 <script>
 import axios from 'axios'
+import eventCenter from '../router/eventCenter'
 export default {
   name: 'Video',
   data () {
     return {
-      updateUrl: '/api/setVideoItemList',
+      updateUrl: '/clientCtrl/setVideoItemList',
       insertRemoveRowId: 0,
       initialPagination: {
         descending: false,
@@ -72,15 +71,20 @@ export default {
       playItemColumns: [
         { name: 'SELECTED', label: 'SELECTED', field: 'selected' },
         { name: 'MRL', label: '视频路径', field: 'mrl' },
-        { name: 'DESCRIPTION', label: '内容描述', field: 'description' },
+        { name: 'TITLE', label: '视频标题', field: 'title' },
+        { name: 'VOLUME', label: '音量', field: 'volume' },
         { name: 'OPTIONS', label: '附加选项', field: 'options' }
       ],
-      playItemContent: [
-        { selected: false, mrl: 'rtmp://58.200.131.2:1935/livetv/gdtv', description: '测试视频（广东卫视）', options: '{"video-filter=motionblur",  "network-caching=2000", "no-plugins-cache"}' },
-        { selected: false, mrl: 'C:\\Users\\lizhuangjie.chnet\\Pictures\\高清视频测试报告\\附件2-不同摄像头视频回传\\大华摄像头.mp4', description: '测试视频（大华摄像头）', options: '' },
-        { selected: false, mrl: 'C:\\Users\\lizhuangjie.chnet\\Pictures\\高清视频测试报告\\附件2-不同摄像头视频回传\\海康摄像头.mp4', description: '测试视频（海康摄像头）', options: '' }
-      ]
+      playItemContent: []
     }
+  },
+  mounted () {
+    console.log('init video config content')
+    eventCenter.$on('init-content', inputInit => {
+      if (inputInit.updateUrl === '/clientCtrl/setVideoItemList' && this.playItemContent.length === 0) {
+        this.playItemContent = inputInit.initContent
+      }
+    })
   },
   methods: {
     onSubmit () {
@@ -89,24 +93,6 @@ export default {
     },
     onReset () {
       console.log('trigger reset event')
-    },
-    bootstrapVideo () {
-      axios.get('/api/bootstrapVideo')
-    },
-    playVideo () {
-      axios.get('/api/playVideo')
-    },
-    pauseVideo () {
-      axios.get('/api/pauseVideo')
-    },
-    rewindVideo () {
-      axios.get('/api/rewindVideo')
-    },
-    visibleCtrlPanel () {
-      axios.get('/api/visibleCtrlPanel')
-    },
-    invisibleCtrlPanel () {
-      axios.get('/api/invisibleCtrlPanel')
     },
     addRow () {
       console.log('----------add Row----------')

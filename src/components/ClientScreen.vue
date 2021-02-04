@@ -9,44 +9,63 @@
           :pagination="initialPagination"
         >
           <template v-slot:top>
-            <q-btn color="primary" label="Add row" @click="addRow" />
             <q-btn class="q-ml-sm" color="primary" label="Remove row" @click="removeRow" />
             <q-space />
           </template>
+          <template v-slot:header="props">
+            <q-tr :props="props">
+              <q-th auto-width />
+              <q-th
+                v-for="col in props.cols"
+                :key="col.name"
+                :props="props"
+              >
+                {{ col.label }}
+              </q-th>
+            </q-tr>
+          </template>
           <template v-slot:body="props">
             <q-tr :props="props">
+              <q-td auto-width>
+                <q-btn size="sm" color="accent" round dense @click="props.expand = !props.expand" :icon="props.expand ? 'remove' : 'add'" />
+              </q-td>
               <q-td key="SELECTED" :props="props">
                 <q-checkbox v-model="props.row.selected" dense autofocus />
               </q-td>
               <q-td key="ID" :props="props">
-                {{ props.row.id }}
-                <q-popup-edit v-model="props.row.id" buttons>
-                  <q-input v-model.number="props.row.id" dense autofocus />
-                </q-popup-edit>
+                {{props.row.id}}
               </q-td>
               <q-td key="TITLES" :props="props">
                 {{ props.row.titles }}
                 <q-popup-edit v-model="props.row.titles" buttons>
-                  <q-input v-model.number="props.row.titles" dense autofocus />
+                  <q-input v-model="props.row.titles" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="EXEFILE" :props="props">
                 {{ props.row.exeFile }}
                 <q-popup-edit v-model="props.row.exeFile" buttons>
-                  <q-input v-model.number="props.row.exeFile" dense autofocus />
+                  <q-input v-model="props.row.exeFile" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="PARAMS" :props="props">
                 {{ props.row.params }}
                 <q-popup-edit v-model="props.row.params" buttons>
-                  <q-input v-model.number="props.row.params" dense autofocus />
+                  <q-input v-model="props.row.params" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="REMARK" :props="props">
                 {{ props.row.remark }}
-                <q-popup-edit v-model="props.row.remark" buttons>
-                  <q-input v-model.number="props.row.remark" dense autofocus />
-                </q-popup-edit>
+              </q-td>
+            </q-tr>
+            <q-tr v-show="props.expand" :props="props">
+              <q-td colspan="100%">
+                <div class="row">
+                  <q-input class="col-6" rounded v-model="props.row.appType" label="应用载体"></q-input>
+                  <q-input class="col-6" rounded v-model="props.row.windowTitle" label="窗口标题"></q-input>
+                </div>
+                <div class="row">
+                  <q-input class="col-12" rounded v-model="props.row.url" label="资源路径"></q-input>
+                </div>
               </q-td>
             </q-tr>
           </template>
@@ -69,7 +88,8 @@ export default {
   name: 'ClientScreen',
   data () {
     return {
-      updateUrl: '',
+      text: '测试文本',
+      updateUrl: '/clientCtrl/setClientConfig',
       insertRemoveRowId: 0,
       initialPagination: {
         descending: false,
@@ -83,27 +103,27 @@ export default {
         { name: 'PARAMS', label: '附加参数', field: 'params' },
         { name: 'REMARK', label: '备注', field: 'remark' }
       ],
-      nodeTableContent: [
-        { selected: false, id: 'HX1F_S1', titles: '10.28.120.5', exeFile: 'default', params: 'default', remark: 'AR' },
-        { selected: false, id: 'HX1F_S2', titles: '无人驾驶', exeFile: 'default', params: 'default', remark: '无人集卡录像' },
-        { selected: false, id: 'HX1F_S3', titles: '无人机', exeFile: 'default', params: 'default', remark: '无人机录像' },
-        { selected: false, id: 'HX1F_S4', titles: '机器人', exeFile: 'default', params: 'default', remark: '机器人' },
-        { selected: false, id: 'HX1F_S5', titles: '在港船舶实时监控', exeFile: 'default', params: 'default', remark: '北斗_AIS/GIS' },
-        { selected: false, id: 'HX1F_S6', titles: '安全监控', exeFile: 'default', params: 'default', remark: '安全监控' },
-        { selected: false, id: 'HX1F_S7', titles: '妈湾智慧港 综合管理平台', exeFile: 'default', params: 'default', remark: 'ePort' },
-        { selected: false, id: 'HX1F_S8', titles: '招商水印', exeFile: 'default', params: 'default', remark: 'HX视频' }
-      ],
+      nodeTableContent: [],
       tableContent: { nodes: [] }
     }
   },
   mounted () {
     console.log('init content mounted begin')
     eventCenter.$on('init-content', inputInit => {
-      if (inputInit.updateUrl === '/clientCtrl/setClientConfig') {
+      if (inputInit.updateUrl === '/clientCtrl/setClientConfig' && this.nodeTableContent.length === 0) {
         this.updateUrl = inputInit.updateUrl
         this.nodeTableContent = inputInit.initContent.nodes
       }
       console.log('listen event of init client content: ' + this.initContent)
+    })
+    eventCenter.$on('server-client-newlyAdded', content => {
+      console.log(content)
+      if (content.length !== 0) {
+        for (let i = 0; i < content.length; i++) {
+          console.log('00000000' + content[i])
+          this.addRow(content[i])
+        }
+      }
     })
   },
   methods: {
@@ -118,12 +138,11 @@ export default {
     uploadTableContent (url, param) {
       axios.post(url, param)
     },
-    addRow () {
+    addRow (row) {
       console.log('----------add Row----------')
       this.getRowIdForInsertRemove()
       console.log('--------insert row index-------' + this.insertRemoveRowId)
-      const tableRowExample = { selected: false, id: 'idCase', name: 'nameCase', titles: 'titleCase', exeFile: 'exeFileCase', type: 'typeCase', wallMode: 'wallModeCase', image: 'imageCase', remark: 'remarkCase' }
-      this.nodeTableContent = [...this.nodeTableContent.slice(0, this.insertRemoveRowId), tableRowExample, ...this.nodeTableContent.slice(this.insertRemoveRowId)]
+      this.nodeTableContent = [...this.nodeTableContent.slice(0, this.insertRemoveRowId), row, ...this.nodeTableContent.slice(this.insertRemoveRowId)]
       console.log(this.nodeTableContent)
     },
     removeRow () {

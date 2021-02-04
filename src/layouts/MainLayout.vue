@@ -66,41 +66,37 @@ export default {
       },
       simple: [
         {
-          label: '基本配置',
+          label: '屏控配置中心',
           children: [
-            { handler: (node) => this.handleClick(node), label: '客户端基本配置', url: 'clientConfig', initUrl: '/clientCtrl/getClientConfig', updateUrl: '/clientCtrl/setClientConfig' },
-            { handler: (node) => this.handleClick(node), label: '服务端基本配置', url: 'serverConfig', initUrl: '/serverCtrl/getServerConfig', updateUrl: '/serverCtrl/setServerConfig' }
+            { handler: (node) => this.handleClick(node), label: '服务端屏控配置', url: 'serverConfig', initUrl: '/serverCtrl/getServerConfig', updateUrl: '/serverCtrl/setServerConfig' },
+            { handler: (node) => this.handleClick(node), label: '客户端屏控配置', url: 'clientConfig', initUrl: '/clientCtrl/getClientConfig', updateUrl: '/clientCtrl/setClientConfig' }
           ]
         },
         {
           label: '预案管理',
           children: [
-            { handler: (node) => this.handleClick(node), label: '1号预案', url: 'clientPlan1', initUrl: '/api/getClientPlan1', updateUrl: '/api/setClientPlan1' },
-            { handler: (node) => this.handleClick(node), label: '2号预案', url: 'clientPlan2', initUrl: '/api/getClientPlan2', updateUrl: '/api/setClientPlan2' },
-            { handler: (node) => this.handleClick(node), label: '3号预案', url: 'clientPlan3', initUrl: '/api/getClientPlan3', updateUrl: '/api/setClientPlan3' },
-            { handler: (node) => this.handleClick(node), label: '4号预案', url: 'clientPlan4', initUrl: '/api/getClientPlan4', updateUrl: '/api/setClientPlan4' },
-            { handler: (node) => this.handleClick(node), label: '5号预案', url: 'clientPlan5', initUrl: '/api/getClientPlan5', updateUrl: '/api/setClientPlan5' },
-            { handler: (node) => this.handleClick(node), label: '6号预案', url: 'clientPlan6', initUrl: '/api/getClientPlan6', updateUrl: '/api/setClientPlan6' },
-            { handler: (node) => this.handleClick(node), label: '7号预案', url: 'clientPlan7', initUrl: '/api/getClientPlan7', updateUrl: '/api/setClientPlan7' }
+            { handler: (node) => this.handleClick(node), label: '1号预案', url: 'clientPlan1', initUrl: '/clientCtrl/getPlan1', updateUrl: '/clientCtrl/setPlan1' },
+            { handler: (node) => this.handleClick(node), label: '2号预案', url: 'clientPlan2', initUrl: '/clientCtrl/getPlan2', updateUrl: '/clientCtrl/setPlan2' },
+            { handler: (node) => this.handleClick(node), label: '3号预案', url: 'clientPlan3', initUrl: '/clientCtrl/getPlan3', updateUrl: '/clientCtrl/setPlan3' }
           ]
         },
         {
-          label: '服务启动',
+          label: '服务调控',
           children: [
-            { handler: (node) => this.handleClick(node), label: '客户端服务启动', url: 'clientScript', initUrl: '', updateUrl: '' },
-            { handler: (node) => this.handleClick(node), label: '服务端服务启动', url: 'serverScript', initUrl: '', updateUrl: '' }
+            { handler: (node) => this.handleClick(node), label: '客户端服务调控', url: 'clientScript', initUrl: '', updateUrl: '' }
           ]
         },
         {
-          label: '大屏控制',
+          label: '屏控界面',
           children: [
-            { handler: (node) => this.handleClick(node), label: '屏控界面', url: 'screenControl', initUrl: '', updateUrl: '' }
+            { handler: (node) => this.handleClick(node), label: '屏控界面跳转', url: 'screenControl', initUrl: '', updateUrl: '' }
           ]
         },
         {
-          label: '视频播放',
+          label: '视频配置控制',
           children: [
-            { handler: (node) => this.handleClick(node), label: '视频控制', url: 'video', initUrl: '', updateUrl: '' }
+            { handler: (node) => this.handleClick(node), label: '视频配置', url: 'videoConfig', initUrl: '/clientCtrl/getVideoItemList', updateUrl: '/clientCtrl/setVideoItemList' },
+            { handler: (node) => this.handleClick(node), label: '视频控制', url: 'videoControl', initUrl: '/clientCtrl/getVideoPlayingItemList', updateUrl: '/clientCtrl/videoControl' }
           ]
         },
         {

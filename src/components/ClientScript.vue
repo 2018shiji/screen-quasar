@@ -2,18 +2,10 @@
   <div class="rightArea">
   <div class="rightTopRow">
     <div class="row">
-      <q-btn :loading="appLoading" :color="buttonColor" @click="startupAppScript(appUrl)" class="col-6">
-      应用程序
-      <template v-slot:loading>
-        <q-spinner-hourglass class="on-left" />
-      </template>
-      </q-btn>
-      <q-btn :loading="ctrlLoading" :color="buttonColor" @click="startUpCtrlScript(ctrlUrl)" class="col-6">
-      屏控软件
-      <template v-slot:loading>
-        <q-spinner-hourglass class="on-left" />
-      </template>
-      </q-btn>
+      <q-btn @click="startUpWebApp()" class="col-3">启动Web程序</q-btn>
+      <q-btn @click="killAllWebApp()" class="col-3">关闭所有Web程序</q-btn>
+      <q-btn @click="startUpVideoApp()" class="col-3">启动Video程序</q-btn>
+      <q-btn @click="killAllVideoApp()" class="col-3">关闭所有Video程序</q-btn>
     </div>
   </div>
   <div class="rightTable" >
@@ -43,8 +35,8 @@
                 vertical
                 class="text-teal"
               >
-                <q-tab name="innerMails" icon="mail" label="App Record" />
-                <q-tab name="innerAlarms" icon="alarm" label="Ctrl Record" />
+                <q-tab name="innerMails" label="应用程序调用结果" />
+                <q-tab name="innerAlarms" label="大屏控制调用结果" />
               </q-tabs>
             </template>
 
@@ -82,14 +74,13 @@ export default {
     return {
       appText: '脚本启动程序调用：',
       ctrlText: '屏控软件程序调用：',
-      appOrCtrl: true,
       appCmdContent: '应用程序启动脚本中控制台的输出内容\n',
       ctrlCmdContent: '屏控软件启动脚本中控制台的输出内容\n',
       buttonColor: 'primary',
-      appUrl: '/clientScript/startUpAppScript',
-      ctrlUrl: '/clientScript/startUpCtrlScript',
-      appLoading: false,
-      ctrlLoading: false,
+      webAppUrl: '/clientScript/startUpWebPage',
+      killAllWebAppUrl: '/clientScript/taskKillAllWebPage',
+      videoAppUrl: '/clientScript/startUpVideoApp',
+      killAllVideoAppUrl: '/clientScript/taskKillAllVideo',
       tab: 'mails',
       innerTab: 'innerMails',
       splitterModel: 20,
@@ -104,30 +95,41 @@ export default {
     this.initWebSocket()
   },
   methods: {
-    startupAppScript (appUrl) {
-      this.appOrCtrl = true
-      this.appLoading = true
-      console.log('发送运行应用程序启动脚本的请求')
+    startUpWebApp () {
+      console.log('startUpWebApp')
       axios
-        .get(appUrl)
+        .get(this.webAppUrl)
         .then(response => {
           console.log(response)
-          this.appLoading = false
         })
     },
-    startUpCtrlScript (ctrlUrl) {
-      this.appOrCtrl = false
-      this.ctrlLoading = true
-      console.log('发送运行屏控程序启动脚本的请求')
+    killAllWebApp () {
+      console.log('killAllWebApp')
       axios
-        .get(ctrlUrl)
+        .get(this.killAllWebAppUrl)
         .then(response => {
           console.log(response)
-          this.ctrlLoading = false
+        })
+    },
+    startUpVideoApp () {
+      console.log('startUpVideoApp')
+      axios
+        .get(this.videoAppUrl)
+        .then(response => {
+          console.log(response)
+        })
+    },
+    killAllVideoApp () {
+      console.log('killAllVideoApp')
+      axios
+        .get(this.killAllVideoAppUrl)
+        .then(response => {
+          console.log(response)
         })
     },
     initWebSocket () {
-      this.websocketProxy = new WebSocket('ws://10.28.111.36:9092/websocket/asset')
+      // this.websocketProxy = new WebSocket('ws://10.28.111.36:20012/websocket/asset')
+      this.websocketProxy = new WebSocket('ws://192.168.43.110:20012/websocket/asset')
       this.websocketProxy.onopen = this.websocketOnOpen
       this.websocketProxy.onmessage = this.websocketOnMessage
       this.websocketProxy.onclose = this.websocketOnClose
@@ -140,11 +142,8 @@ export default {
       console.log('建立连接')
     },
     websocketOnMessage (msg) {
-      if (this.appOrCtrl === true) {
-        this.appCmdContent = this.appCmdContent + msg.data
-      } else if (this.appOrCtrl === false) {
-        this.ctrlCmdContent = this.ctrlCmdContent + msg.data
-      }
+      this.appCmdContent = this.appCmdContent + msg.data
+      this.ctrlCmdContent = this.ctrlCmdContent + msg.data
       console.log('Socket 收到消息' + msg.data)
     },
     websocketOnClose () {

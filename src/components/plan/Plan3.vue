@@ -22,31 +22,13 @@
               <q-td key="ID" :props="props">
                 {{ props.row.id }}
                 <q-popup-edit v-model="props.row.id" buttons>
-                  <q-input v-model.number="props.row.id" dense autofocus />
-                </q-popup-edit>
-              </q-td>
-              <q-td key="NAME" :props="props">
-                {{ props.row.name }}
-                <q-popup-edit v-model="props.row.name" buttons>
-                  <q-input v-model.number="props.row.name" dense autofocus />
-                </q-popup-edit>
-              </q-td>
-              <q-td key="TITLES" :props="props">
-                {{ props.row.titles }}
-                <q-popup-edit v-model="props.row.titles" buttons>
-                  <q-input v-model.number="props.row.titles" dense autofocus />
-                </q-popup-edit>
-              </q-td>
-              <q-td key="EXEFILE" :props="props">
-                {{ props.row.exeFile }}
-                <q-popup-edit v-model="props.row.exeFile" buttons>
-                  <q-input v-model.number="props.row.exeFile" dense autofocus />
+                  <q-input v-model="props.row.id" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="REMARK" :props="props">
                 {{ props.row.remark }}
                 <q-popup-edit v-model="props.row.remark" buttons>
-                  <q-input v-model.number="props.row.remark" dense autofocus />
+                  <q-input v-model="props.row.remark" dense autofocus />
                 </q-popup-edit>
               </q-td>
             </q-tr>
@@ -70,7 +52,8 @@ export default {
   name: 'Plan3',
   data () {
     return {
-      updateUrl: '',
+      clientUpdateUrl: '/clientCtrl/setClientPlan1',
+      serverUpdateUrl: '/serverCtrl/setServerPlan1',
       insertRemoveRowId: 0,
       initialPagination: {
         descending: false,
@@ -79,40 +62,35 @@ export default {
       nodeTableColumns: [
         { name: 'SELECTED', label: 'SELECTED', field: 'selected' },
         { name: 'ID', label: 'ID', field: 'id', sortable: true },
-        { name: 'NAME', label: '名称', field: 'name' },
-        { name: 'TITLES', label: '标题', field: 'titles' },
-        { name: 'EXEFILE', label: '执行程序', field: 'exeFile' },
         { name: 'REMARK', label: '备注', field: 'remark' }
       ],
-      nodeTableContent: [
-        { selected: false, id: 'HX1F_S4', name: 'default', titles: '机器人', exeFile: 'default', remark: '机器人' },
-        { selected: false, id: 'HX1F_S5', name: 'default', titles: '在港船舶实时监控', exeFile: 'default', remark: '北斗_AIS/GIS' },
-        { selected: false, id: 'HX1F_S6', name: 'default', titles: '安全监控', exeFile: 'default', remark: '安全监控' },
-        { selected: false, id: 'HX1F_S7', name: 'default', titles: '妈湾智慧港 综合管理平台', exeFile: 'default', remark: 'ePort' }
-      ],
+      nodeTableContent: [],
       tableContent: { nodes: [] }
     }
   },
   mounted () {
     console.log('init client content3 mounted begin')
     eventCenter.$on('init-content', inputInit => {
-      if (inputInit.updateUrl === '/api/setClientConfig3') {
-        this.updateUrl = inputInit.updateUrl
+      if (inputInit.updateUrl === '/clientCtrl/setPlan3' && this.nodeTableContent.length === 0) {
         this.nodeTableContent = inputInit.initContent.nodes
       }
-      console.log('listen event of init client content3: ' + this.initContent)
+      console.log('listen event of init content3: ' + this.initContent)
     })
   },
   methods: {
     onSubmit () {
       console.log('trigger submit event')
       this.tableContent.nodes = this.nodeTableContent
-      this.uploadTableContent(this.updateUrl, this.tableContent)
+      this.uploadClientContent(this.clientUpdateUrl, this.tableContent)
+      this.uploadServerContent(this.serverUpdateUrl, this.tableContent)
     },
     onReset () {
       console.log('trigger reset event')
     },
-    uploadTableContent (url, param) {
+    uploadClientContent (url, param) {
+      axios.post(url, param)
+    },
+    uploadServerContent (url, param) {
       axios.post(url, param)
     },
     addRow () {

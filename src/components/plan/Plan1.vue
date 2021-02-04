@@ -22,31 +22,13 @@
               <q-td key="ID" :props="props">
                 {{ props.row.id }}
                 <q-popup-edit v-model="props.row.id" buttons>
-                  <q-input v-model.number="props.row.id" dense autofocus />
-                </q-popup-edit>
-              </q-td>
-              <q-td key="NAME" :props="props">
-                {{ props.row.name }}
-                <q-popup-edit v-model="props.row.name" buttons>
-                  <q-input v-model.number="props.row.name" dense autofocus />
-                </q-popup-edit>
-              </q-td>
-              <q-td key="TITLES" :props="props">
-                {{ props.row.titles }}
-                <q-popup-edit v-model="props.row.titles" buttons>
-                  <q-input v-model.number="props.row.titles" dense autofocus />
-                </q-popup-edit>
-              </q-td>
-              <q-td key="EXEFILE" :props="props">
-                {{ props.row.exeFile }}
-                <q-popup-edit v-model="props.row.exeFile" buttons>
-                  <q-input v-model.number="props.row.exeFile" dense autofocus />
+                  <q-input v-model="props.row.id" dense autofocus />
                 </q-popup-edit>
               </q-td>
               <q-td key="REMARK" :props="props">
                 {{ props.row.remark }}
                 <q-popup-edit v-model="props.row.remark" buttons>
-                  <q-input v-model.number="props.row.remark" dense autofocus />
+                  <q-input v-model="props.row.remark" dense autofocus />
                 </q-popup-edit>
               </q-td>
             </q-tr>
@@ -70,7 +52,8 @@ export default {
   name: 'Plan1',
   data () {
     return {
-      updateUrl: '',
+      clientUpdateUrl: '/clientCtrl/setClientPlan1',
+      serverUpdateUrl: '/serverCtrl/setServerPlan1',
       insertRemoveRowId: 0,
       initialPagination: {
         descending: false,
@@ -79,36 +62,42 @@ export default {
       nodeTableColumns: [
         { name: 'SELECTED', label: 'SELECTED', field: 'selected' },
         { name: 'ID', label: 'ID', field: 'id', sortable: true },
-        { name: 'NAME', label: '名称', field: 'name' },
-        { name: 'TITLES', label: '标题', field: 'titles' },
-        { name: 'EXEFILE', label: '执行程序', field: 'exeFile' },
         { name: 'REMARK', label: '备注', field: 'remark' }
       ],
-      nodeTableContent: [
-        { selected: false, id: 'HX1F_S1', name: 'default', titles: '10.28.120.5', exeFile: 'default', remark: 'AR' },
-        { selected: false, id: 'HX1F_S2', name: 'default', titles: '无人驾驶', exeFile: 'default', remark: '无人集卡录像' },
-        { selected: false, id: 'HX1F_S3', name: 'default', titles: '无人机', exeFile: 'default', remark: '无人机录像' }
-      ],
+      nodeTableContent: [],
       tableContent: { nodes: [] }
     }
+  },
+  mounted () {
+    console.log('init client content1 mounted begin')
+    eventCenter.$on('init-content', inputInit => {
+      if (inputInit.updateUrl === '/clientCtrl/setPlan1' && this.nodeTableContent.length === 0) {
+        this.nodeTableContent = inputInit.initContent.nodes
+      }
+      console.log('listen event of init content1: ' + this.initContent)
+    })
   },
   methods: {
     onSubmit () {
       console.log('trigger submit event')
       this.tableContent.nodes = this.nodeTableContent
-      this.uploadTableContent(this.updateUrl, this.tableContent)
+      this.uploadClientContent(this.clientUpdateUrl, this.tableContent)
+      this.uploadServerContent(this.serverUpdateUrl, this.tableContent)
     },
     onReset () {
       console.log('trigger reset event')
     },
-    uploadTableContent (url, param) {
+    uploadClientContent (url, param) {
+      axios.post(url, param)
+    },
+    uploadServerContent (url, param) {
       axios.post(url, param)
     },
     addRow () {
       console.log('----------add Row----------')
       this.getRowIdForInsertRemove()
       console.log('--------insert row index-------' + this.insertRemoveRowId)
-      const tableRowExample = { selected: false, id: 'idCase', name: 'nameCase', titles: 'titleCase', exeFile: 'exeFileCase', type: 'typeCase', wallMode: 'wallModeCase', image: 'imageCase', remark: 'remarkCase' }
+      const tableRowExample = { selected: false, id: 'idCase' }
       this.nodeTableContent = [...this.nodeTableContent.slice(0, this.insertRemoveRowId), tableRowExample, ...this.nodeTableContent.slice(this.insertRemoveRowId)]
       console.log(this.nodeTableContent)
     },
@@ -123,16 +112,6 @@ export default {
           }
         }
       }
-    },
-    mounted () {
-      console.log('init client content1 mounted begin')
-      eventCenter.$on('init-content', inputInit => {
-        if (inputInit.updateUrl === '/api/setClientConfig1') {
-          this.updateUrl = inputInit.updateUrl
-          this.nodeTableContent = inputInit.initContent.nodes
-        }
-        console.log('listen event of init client content1: ' + this.initContent)
-      })
     },
     getRowIdForInsertRemove () {
       console.log(this.nodeTableContent)

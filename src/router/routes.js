@@ -11,14 +11,11 @@ const routes = [
       { path: 'clientPlan1', component: () => import('components/plan/Plan1.vue') },
       { path: 'clientPlan2', component: () => import('components/plan/Plan2.vue') },
       { path: 'clientPlan3', component: () => import('components/plan/Plan3.vue') },
-      { path: 'clientPlan4', component: () => import('components/plan/Plan4.vue') },
-      { path: 'clientPlan5', component: () => import('components/plan/Plan5.vue') },
-      { path: 'clientPlan6', component: () => import('components/plan/Plan6.vue') },
-      { path: 'clientPlan7', component: () => import('components/plan/Plan7.vue') },
 
       { path: 'clientScript', component: () => import('components/ClientScript.vue') },
 
-      { path: 'video', component: () => import('components/Video.vue') },
+      { path: 'videoConfig', component: () => import('components/VideoConfig.vue') },
+      { path: 'videoControl', component: () => import('components/VideoControl.vue') },
 
       { path: 'serverService', component: () => import('components/ServerService.vue') },
       { path: 'clientService', component: () => import('components/ClientService.vue') },
