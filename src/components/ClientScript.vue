@@ -84,15 +84,19 @@ export default {
       tab: 'mails',
       innerTab: 'innerMails',
       splitterModel: 20,
+      webSocketUrl: '',
       websocketProxy: null
     }
   },
   mounted () {
     console.log('client script mounted begin')
-    eventCenter.$on('init-inputParams', inputInit => {
-      console.log(inputInit)
+    eventCenter.$on('init-content', inputInit => {
+      if (inputInit.updateUrl === '/clientScript/update') {
+        this.webSocketUrl = 'ws://' + inputInit.initContent.clientCtrlIp + ':20012'
+        console.log(inputInit.initContent.clientCtrlIp)
+        this.initWebSocket()
+      }
     })
-    this.initWebSocket()
   },
   methods: {
     startUpWebApp () {
@@ -129,7 +133,7 @@ export default {
     },
     initWebSocket () {
       // this.websocketProxy = new WebSocket('ws://10.28.111.36:20012/websocket/asset')
-      this.websocketProxy = new WebSocket('ws://192.168.43.110:20012/websocket/asset')
+      this.websocketProxy = new WebSocket(this.webSocketUrl + '/websocket/asset')
       this.websocketProxy.onopen = this.websocketOnOpen
       this.websocketProxy.onmessage = this.websocketOnMessage
       this.websocketProxy.onclose = this.websocketOnClose

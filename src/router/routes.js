@@ -5,6 +5,7 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: 'index', component: () => import('pages/Index.vue') },
+      { path: 'globalConfig', component: () => import('components/GlobalConfig.vue') },
       { path: 'clientConfig', component: () => import('components/ClientScreen.vue') },
       { path: 'serverConfig', component: () => import('components/ServerScreen.vue') },
 

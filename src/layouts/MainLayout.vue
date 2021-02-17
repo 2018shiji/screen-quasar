@@ -68,6 +68,7 @@ export default {
         {
           label: '屏控配置中心',
           children: [
+            { handler: (node) => this.handleClick(node), label: '全局配置中心', url: 'GlobalConfig', initUrl: '/serverCtrl/getGlobalConfig', updateUrl: '/serverCtrl/setGlobalConfig' },
             { handler: (node) => this.handleClick(node), label: '服务端屏控配置', url: 'serverConfig', initUrl: '/serverCtrl/getServerConfig', updateUrl: '/serverCtrl/setServerConfig' },
             { handler: (node) => this.handleClick(node), label: '客户端屏控配置', url: 'clientConfig', initUrl: '/clientCtrl/getClientConfig', updateUrl: '/clientCtrl/setClientConfig' }
           ]
@@ -83,7 +84,7 @@ export default {
         {
           label: '服务调控',
           children: [
-            { handler: (node) => this.handleClick(node), label: '客户端服务调控', url: 'clientScript', initUrl: '', updateUrl: '' }
+            { handler: (node) => this.handleClick(node), label: '客户端服务调控', url: 'clientScript', initUrl: '/serverCtrl/getGlobalConfig', updateUrl: '/clientScript/update' }
           ]
         },
         {
